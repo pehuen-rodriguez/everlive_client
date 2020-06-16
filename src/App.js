@@ -16,8 +16,6 @@ let channel;
 let presence;
 
 function App() {
-  const [userList, setUsersList] = useState(new Set());
-  const [coordsList, setCoordsList] = useState(new Map());
   const [presences, setPresences] = useState();
 
   const query = useQuery();
@@ -35,13 +33,6 @@ function App() {
 
     presence = new Presence(channel);
 
-    channel.on("move", (msg) => {
-      const { user, x, y, z } = msg;
-      setUsersList((prev) => new Set(prev.add(user)));
-      setCoordsList((prev) => {
-        return new Map(prev.set(user, { x, y, z }));
-      });
-    });
     presence.onSync(() => {
       setPresences((prev) => {
         return presence.list();
@@ -69,9 +60,6 @@ function App() {
   return (
     <div className="App" onMouseMove={handleMouseMove}>
       <p>{JSON.stringify(presences)}</p>
-      {[...userList.values()].map((user) => (
-        <p key={user}>{`${user}:: ${JSON.stringify(coordsList.get(user))}`}</p>
-      ))}
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
